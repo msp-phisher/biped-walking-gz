@@ -40,4 +40,8 @@ ros2 launch biped_description gazebo.launch.py
 ## In second Terminal
 python3 walk.py
 
+## Simulation Preview
+
+![Biped Simulation](docs/images/Screenshot-from-2026-02-15-01-42-39.png)
+
 
