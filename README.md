@@ -42,6 +42,6 @@ python3 walk.py
 
 ## Simulation Preview
 
-![Biped Simulation](docs/images/Screenshot-from-2026-02-15-01-42-39.png)
+![Biped Simulation](docs/images/Screenshot from 2026-02-15 01-42-39.png)
 
 
