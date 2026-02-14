@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd"
+            schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+
+  <name>biped_description</name>
+  <version>0.0.1</version>
+  <description>Biped robot description with Gazebo, ros2_control, IMU, and walking controller</description>
+
+  <maintainer email="manoja@todo.todo">manoja</maintainer>
+  <license>Apache-2.0</license>
+
+  <!-- ================= CORE ================= -->
+  <depend>rclpy</depend>
+
+  <!-- ================= ROS 2 MESSAGES ================= -->
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+
+  <!-- ================= TF / IMU ================= -->
+  <exec_depend>tf_transformations</exec_depend>
+
+  <!-- ================= GAZEBO + CONTROL ================= -->
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_ros2_control</exec_depend>
+
+  <!-- ================= TEST ================= -->
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+
+</package>
+

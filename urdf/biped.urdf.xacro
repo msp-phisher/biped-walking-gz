@@ -1,0 +1,284 @@
+<?xml version="1.0"?>
+<robot name="simple_biped" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="pelvis_len" value="0.25"/> <xacro:property name="pelvis_radius" value="0.03"/>
+  <xacro:property name="pelvis_mass" value="0.5"/> <xacro:property name="thigh_len" value="0.40"/>
+  <xacro:property name="shank_len" value="0.40"/>
+  <xacro:property name="leg_radius" value="0.04"/> <xacro:property name="thigh_mass" value="4.0"/>
+  <xacro:property name="shank_mass" value="3.0"/>
+  <xacro:property name="small_link_mass" value="0.1"/> <xacro:property name="small_link_inertia" value="0.0001"/>
+
+  <xacro:property name="foot_x" value="0.22"/> <xacro:property name="foot_y" value="0.12"/> <xacro:property name="foot_z" value="0.02"/> <xacro:property name="foot_mass" value="1.0"/> 
+
+  <xacro:property name="hip_y" value="0.10"/> <xacro:macro name="box_inertia" params="m x y z">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${m*(y*y+z*z)/12}" ixy="0" ixz="0"
+               iyy="${m*(x*x+z*z)/12}" iyz="0"
+               izz="${m*(x*x+y*y)/12}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="cyl_inertia" params="m r h origin_z">
+    <inertial>
+      <origin xyz="0 0 ${origin_z}"/>
+      <mass value="${m}"/>
+      <inertia ixx="${m*(3*r*r+h*h)/12}" ixy="0" ixz="0"
+               iyy="${m*(3*r*r+h*h)/12}" iyz="0"
+               izz="${m*r*r/2}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="sphere_inertia" params="m r">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${2*m*r*r/5}" ixy="0" ixz="0"
+               iyy="${2*m*r*r/5}" iyz="0"
+               izz="${2*m*r*r/5}"/>
+    </inertial>
+  </xacro:macro>
+
+  <link name="torso">
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/> 
+      <geometry><cylinder radius="${pelvis_radius}" length="${pelvis_len}"/></geometry>
+      <material name="grey"><color rgba="0.2 0.2 0.2 1.0"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry><cylinder radius="${pelvis_radius}" length="${pelvis_len}"/></geometry>
+    </collision>
+    <inertial>
+        <mass value="${pelvis_mass}"/>
+        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+  </link>
+
+  <link name="R_hip_roll_link">
+    <inertial>
+      <mass value="${small_link_mass}"/>
+      <inertia ixx="${small_link_inertia}" iyy="${small_link_inertia}" izz="${small_link_inertia}" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <joint name="R_hip_roll" type="revolute">
+    <parent link="torso"/>
+    <child link="R_hip_roll_link"/>
+    <origin xyz="0 -${hip_y} 0"/> 
+    <axis xyz="1 0 0"/>
+    <limit lower="-0.8" upper="0.5" effort="200" velocity="5.0"/>
+    <dynamics damping="1.0" friction="0.5"/>
+  </joint>
+
+  <joint name="R_hip_pitch" type="revolute">
+    <parent link="R_hip_roll_link"/>
+    <child link="R_thigh"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="1.5" upper="-1.5" effort="200" velocity="5.0"/> 
+    <dynamics damping="1.0" friction="0.5"/>
+  </joint>
+
+  <link name="R_thigh">
+    <visual>
+        <origin xyz="0 0 -${thigh_len/2}"/>
+        <geometry><cylinder radius="${leg_radius}" length="${thigh_len}"/></geometry>
+        <material name="red"><color rgba="0.8 0.1 0.1 1.0"/></material>
+    </visual>
+    <collision>
+        <origin xyz="0 0 -${thigh_len/2}"/>
+        <geometry><cylinder radius="${leg_radius}" length="${thigh_len}"/></geometry>
+    </collision>
+    <xacro:cyl_inertia m="${thigh_mass}" r="${leg_radius}" h="${thigh_len}" origin_z="-${thigh_len/2}"/>
+  </link>
+
+  <joint name="R_knee" type="revolute">
+    <parent link="R_thigh"/>
+    <child link="R_shank"/>
+    <origin xyz="0 0 -${thigh_len}"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.6" upper="0" effort="300" velocity="5.0"/>
+    <dynamics damping="1.0" friction="0.5"/>
+  </joint>
+
+  <link name="R_shank">
+    <visual>
+        <origin xyz="0 0 -${shank_len/2}"/>
+        <geometry><cylinder radius="${leg_radius}" length="${shank_len}"/></geometry>
+        <material name="red"><color rgba="0.8 0.1 0.1 1.0"/></material>
+    </visual>
+    <collision>
+        <origin xyz="0 0 -${shank_len/2}"/>
+        <geometry><cylinder radius="${leg_radius}" length="${shank_len}"/></geometry>
+    </collision>
+    <xacro:cyl_inertia m="${shank_mass}" r="${leg_radius}" h="${shank_len}" origin_z="-${shank_len/2}"/>
+  </link>
+
+  <link name="R_ankle_roll_link">
+    <inertial>
+      <mass value="${small_link_mass}"/>
+      <inertia ixx="${small_link_inertia}" iyy="${small_link_inertia}" izz="${small_link_inertia}" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <joint name="R_ankle_roll" type="revolute">
+    <parent link="R_shank"/>
+    <child link="R_ankle_roll_link"/>
+    <origin xyz="0 0 -${shank_len}"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-0.5" upper="0.5" effort="100" velocity="5.0"/>
+    <dynamics damping="0.5" friction="0.1"/>
+  </joint>
+
+  <joint name="R_ankle_pitch" type="revolute">
+    <parent link="R_ankle_roll_link"/>
+    <child link="R_foot"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.8" upper="0.8" effort="150" velocity="5.0"/>
+    <dynamics damping="0.5" friction="0.1"/>
+  </joint>
+
+  <link name="R_foot">
+    <visual>
+        <origin xyz="0.05 0 -${foot_z/2}"/> <geometry><box size="${foot_x} ${foot_y} ${foot_z}"/></geometry>
+        <material name="black"><color rgba="0.1 0.1 0.1 1.0"/></material>
+    </visual>
+    <collision>
+        <origin xyz="0.05 0 -${foot_z/2}"/>
+        <geometry><box size="${foot_x} ${foot_y} ${foot_z}"/></geometry>
+    </collision>
+    <xacro:box_inertia m="${foot_mass}" x="${foot_x}" y="${foot_y}" z="${foot_z}"/>
+  </link>
+
+  <link name="L_hip_roll_link">
+    <inertial>
+      <mass value="${small_link_mass}"/>
+      <inertia ixx="${small_link_inertia}" iyy="${small_link_inertia}" izz="${small_link_inertia}" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <joint name="L_hip_roll" type="revolute">
+    <parent link="torso"/>
+    <child link="L_hip_roll_link"/>
+    <origin xyz="0 ${hip_y} 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-0.5" upper="0.8" effort="200" velocity="5.0"/>
+    <dynamics damping="1.0" friction="0.5"/>
+  </joint>
+
+  <joint name="L_hip_pitch" type="revolute">
+    <parent link="L_hip_roll_link"/>
+    <child link="L_thigh"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="1.5" upper="-1.5" effort="200" velocity="5.0"/>
+    <dynamics damping="1.0" friction="0.5"/>
+  </joint>
+
+  <link name="L_thigh">
+    <visual>
+        <origin xyz="0 0 -${thigh_len/2}"/>
+        <geometry><cylinder radius="${leg_radius}" length="${thigh_len}"/></geometry>
+        <material name="blue"><color rgba="0.1 0.1 0.8 1.0"/></material>
+    </visual>
+    <collision>
+        <origin xyz="0 0 -${thigh_len/2}"/>
+        <geometry><cylinder radius="${leg_radius}" length="${thigh_len}"/></geometry>
+    </collision>
+    <xacro:cyl_inertia m="${thigh_mass}" r="${leg_radius}" h="${thigh_len}" origin_z="-${thigh_len/2}"/>
+  </link>
+
+  <joint name="L_knee" type="revolute">
+    <parent link="L_thigh"/>
+    <child link="L_shank"/>
+    <origin xyz="0 0 -${thigh_len}"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.6" upper="0" effort="300" velocity="5.0"/>
+    <dynamics damping="1.0" friction="0.5"/>
+  </joint>
+
+  <link name="L_shank">
+    <visual>
+        <origin xyz="0 0 -${shank_len/2}"/>
+        <geometry><cylinder radius="${leg_radius}" length="${shank_len}"/></geometry>
+        <material name="blue"><color rgba="0.1 0.1 0.8 1.0"/></material>
+    </visual>
+    <collision>
+        <origin xyz="0 0 -${shank_len/2}"/>
+        <geometry><cylinder radius="${leg_radius}" length="${shank_len}"/></geometry>
+    </collision>
+    <xacro:cyl_inertia m="${shank_mass}" r="${leg_radius}" h="${shank_len}" origin_z="-${shank_len/2}"/>
+  </link>
+
+  <link name="L_ankle_roll_link">
+    <inertial>
+      <mass value="${small_link_mass}"/>
+      <inertia ixx="${small_link_inertia}" iyy="${small_link_inertia}" izz="${small_link_inertia}" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <joint name="L_ankle_roll" type="revolute">
+    <parent link="L_shank"/>
+    <child link="L_ankle_roll_link"/>
+    <origin xyz="0 0 -${shank_len}"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-0.5" upper="0.5" effort="100" velocity="5.0"/>
+    <dynamics damping="0.5" friction="0.1"/>
+  </joint>
+
+  <joint name="L_ankle_pitch" type="revolute">
+    <parent link="L_ankle_roll_link"/>
+    <child link="L_foot"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.8" upper="0.8" effort="150" velocity="5.0"/>
+    <dynamics damping="0.5" friction="0.1"/>
+  </joint>
+
+  <link name="L_foot">
+    <visual>
+        <origin xyz="0.05 0 -${foot_z/2}"/>
+        <geometry><box size="${foot_x} ${foot_y} ${foot_z}"/></geometry>
+        <material name="black"><color rgba="0.1 0.1 0.1 1.0"/></material>
+    </visual>
+    <collision>
+        <origin xyz="0.05 0 -${foot_z/2}"/>
+        <geometry><box size="${foot_x} ${foot_y} ${foot_z}"/></geometry>
+    </collision>
+    <xacro:box_inertia m="${foot_mass}" x="${foot_x}" y="${foot_y}" z="${foot_z}"/>
+  </link>
+
+  <gazebo reference="torso">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>1</always_on>
+      <update_rate>100</update_rate>
+      <visualize>true</visualize>
+      </sensor>
+  </gazebo>
+
+  <gazebo>
+    <plugin filename="libignition-gazebo-imu-system.so"
+            name="ignition::gazebo::systems::Imu">
+    </plugin>
+  </gazebo>
+  
+  <gazebo reference="L_foot">
+    <surface>
+      <friction>
+        <ode><mu>2.2</mu><mu2>2.2</mu2></ode>
+      </friction>
+      <contact>
+        <ode><kp>300000</kp><kd>50</kd><min_depth>0.001</min_depth></ode>
+      </contact>
+    </surface>
+  </gazebo>
+
+  <gazebo reference="R_foot">
+    <surface>
+      <friction>
+        <ode><mu>2.2</mu><mu2>2.2</mu2></ode>
+      </friction>
+      <contact>
+        <ode><kp>300000</kp><kd>50</kd><min_depth>0.001</min_depth></ode>
+      </contact>
+    </surface>
+  </gazebo>
+
+</robot>
