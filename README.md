@@ -1,66 +1,59 @@
-# Biped Walking Robot in ROS2 (Ignition Gazebo)
+# ROS2 Biped Walking Simulation
 
-A 10-DOF planar biped robot developed in ROS2 (Humble) using `ros2_control` and Ignition Gazebo for physics simulation.  
-This project demonstrates basic joint-space walking through trajectory control without external balance controllers.
+A custom 10-DOF biped robot simulated in ROS2 Humble with Ignition Gazebo using `ros2_control`.
 
----
-
-## Overview
-
-This repository contains:
-
-- Custom URDF/Xacro biped model
-- ros2_control hardware interface configuration
-- JointTrajectoryController based motion execution
-- Ignition Gazebo simulation setup
-- Python walking script for alternating swing motion
-
-The robot consists of:
-
-- 2 legs
-- 5 DOF per leg:
-  - Hip roll
-  - Hip pitch
-  - Knee
-  - Ankle roll
-  - Ankle pitch
-
-Total: **10 actuated joints**
+This repository demonstrates a basic quasi-static walking gait and provides:
+- URDF model with Xacro
+- Joint controllers configured via ros2_control
+- Python script for simple alternating leg motion
+- Simulation launch files
 
 ---
 
-## System Architecture
+## Features
 
-ROS2 Node (walk.py)
-↓
-JointTrajectoryController
-↓
-ros2_control (IgnitionSystem)
-↓
-Ignition Gazebo Physics Engine
-↓
-URDF Model
-
-
-Control mode:
-- Position interface via JointTrajectoryController
-- Open-loop joint space walking
-- No ZMP / MPC / LQR balance controller
+- Custom planar biped with 5 DOF per leg
+- Gazebo simulation
+- JointTrajectoryController position control
+- Alternating swing walking demo
 
 ---
+## Requirements
 
-## Dependencies
-
-- Ubuntu 22.04
 - ROS2 Humble
-- Ignition Gazebo (Fortress / compatible)
-- ros2_control
-- joint_trajectory_controller
+- Ignition Gazebo
+- ros2_control + joint_trajectory_controller
+- Python3
 
-Install required packages:
+---
+
+##  Installation
 
 ```bash
-sudo apt install ros-humble-ros2-control \
-                 ros-humble-ros2-controllers \
-                 ros-humble-joint-state-publisher-gui \
-                 ros-humble-robot-state-publisher
+cd ~/ros2_ws/src
+git clone https://github.com/msp-phisher/biped-walking-gz.git
+cd ~/ros2_ws
+colcon build
+source install/setup.bash
+ros2 launch biped_description gazebo.launch.py
+
+In second Terminal
+Build and python3 walk.py
+
+<img width="1852" height="1046" alt="image" src="https://github.com/user-attachments/assets/edcd5505-60d0-423f-83d0-0d9c58e1aa55" />
+
+## About Walking
+
+This project currently uses a quasi-static open-loop walking gait:
+Lifts one leg at a time
+Slow leg swing
+No dynamic balance controller
+Designed for learning & simulation
+
+## Status & Limitations
+
+No lateral balance (hip_roll control)
+No IMU feedback
+Not suitable for rough terrain
+Future: ZMP, LIPM, stable balance
+
