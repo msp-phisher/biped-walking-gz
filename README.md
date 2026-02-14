@@ -37,23 +37,7 @@ colcon build
 source install/setup.bash
 ros2 launch biped_description gazebo.launch.py
 
-In second Terminal
-Build and python3 walk.py
+## In second Terminal
+python3 walk.py
 
-<img width="1852" height="1046" alt="image" src="https://github.com/user-attachments/assets/edcd5505-60d0-423f-83d0-0d9c58e1aa55" />
-
-## About Walking
-
-This project currently uses a quasi-static open-loop walking gait:
-Lifts one leg at a time
-Slow leg swing
-No dynamic balance controller
-Designed for learning & simulation
-
-## Status & Limitations
-
-No lateral balance (hip_roll control)
-No IMU feedback
-Not suitable for rough terrain
-Future: ZMP, LIPM, stable balance
 
