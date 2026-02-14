@@ -7,7 +7,7 @@ This repository demonstrates a basic quasi-static walking gait and provides:
 - Joint controllers configured via ros2_control
 - Python script for simple alternating leg motion
 - Simulation launch files
-- 
+  
 ## Simulation Preview
 
 ![Biped Simulation](docs/images/Screenshot%20from%202026-02-15%2001-42-39.png)
@@ -45,9 +45,5 @@ ros2 launch biped_description gazebo.launch.py
 ## In second Terminal
 python3 walk.py
 
----
 
-## Simulation Preview
-
-![Biped Simulation](docs/images/Screenshot%20from%202026-02-15%2001-42-39.png)
 
